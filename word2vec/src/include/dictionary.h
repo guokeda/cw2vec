@@ -11,6 +11,7 @@
 #include "args.h"
 #include "real.h"
 #include "alphabet.h"
+#include "Utf.h"
 
 #include <random>
 #include <memory>
@@ -309,9 +310,9 @@ void Dictionary::initFeature() {
 		}
 	}
 
-	//substoke for chinese character component feature
+	//substoke for chinese word stoke feature
 	if (args_->model == model_name::substoke) {
-		std::cerr << "initial component feature" << std::endl;
+		std::cerr << "initial word stoke feature" << std::endl;
 		std::cerr << "substoke model" << std::endl;
 		std::string word;
 		std::string feat;
@@ -348,17 +349,21 @@ void Dictionary::trim(std::string& s) {
 * @Function: get feature from feature map in dictionary.
 */
 std::string Dictionary::getFeat(std::string word) {
-	featpos = featuremap.find(word);
+	std::vector<string> char_vec;
+	getCharactersFromUTF8String(word, char_vec);
 	std::string feat;
-	if (featpos != featuremap.end()) {
-		//std::cout << (*featpos).first << "	" << (*featpos).second << std::endl;
-		feat = (*featpos).second;
-	} else {
+	for (int i = 0; i < char_vec.size(); i++) {
+		std::string char_str = char_vec[i];
+		featpos = featuremap.find(char_str);
+		if (featpos != featuremap.end()) {
+			//std::cout << (*featpos).first << "	" << (*featpos).second << std::endl;
+			feat += (*featpos).second;
+		}
+	}
+	trim(feat);
+	if (feat == "") {
 		feat = args_->featurepad;
 	}
-	// delete space empty
-	//trim(feat);
-	//std::cout << word + "	" + feat << std::endl;
 	return feat;
 }
 

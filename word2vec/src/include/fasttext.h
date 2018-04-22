@@ -11,6 +11,7 @@
 
 #include<time.h>
 
+#include <windows.h>
 #include<iostream>
 #include<vector>
 #include<string>
@@ -25,6 +26,7 @@
 #include "model.h"
 #include "real.h"
 #include "utils.h"
+
 
 class FastText {
   protected:
@@ -264,11 +266,17 @@ void FastText::saveVectors() {
 
 	Vector vec(args_->dim);
 
+	/*char szDirName[] = args_->output;
+	if(CreateDirectory(szDirName, NULL)) {
+		std::cout << "Create a new directory succeeds" << std::endl;
+	}
+*/
 	if (nwords > 0) {
 		std::ofstream ofs(args_->output + ".source");
 		if (!ofs.is_open()) {
 			throw std::invalid_argument(args_->output + ".source" + " cannot be opened for saving source embedding.");
 		}
+		ofs << nwords << " " << args_->dim << std::endl;
 		for (int32_t i = 0; i < nwords; i++){
 			std::string word = dict_->getWord(i);
 			vec.zero();
@@ -284,7 +292,7 @@ void FastText::saveVectors() {
 			throw std::invalid_argument(
 				args_->output + ".feature" + " cannot be opened for saving feature embedding.");
 		}
-
+		ofs << nfeatures << " " << args_->dim << std::endl;
 		for (int32_t i = 0; i < nfeatures; i++) {
 			std::string feature = dict_->getFeature(i);
 			vec.zero();
@@ -300,6 +308,7 @@ void FastText::saveVectors() {
 		if (!ofs.is_open()) {
 			throw std::invalid_argument(args_->output + ".target" + " cannot be opened for saving target embedding.");
 		}
+		ofs << ntargets << " " << args_->dim << std::endl;
 		for (int32_t i = 0; i < ntargets; i++) {
 			std::string word = dict_->getTarget(i);
 			vec.zero();

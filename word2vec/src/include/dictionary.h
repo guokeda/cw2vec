@@ -295,7 +295,7 @@ void Dictionary::initFeature() {
 	// skipgram and cbow model don't need feature
 	if ((args_->model == model_name::skipgram) || (args_->model == model_name::cbow))
 		return;
-
+	std::cout << "initail feature, maybe take a while...... " << std::endl;
 	//subword for english
 	if (args_->model == model_name::subword) {
 		for (size_t i = 0; i < words_.m_size; i++) {
@@ -329,6 +329,7 @@ void Dictionary::initFeature() {
 			}
 		}
 	}
+	std::cout << "initail feature finished. " << std::endl;
 }
 
 /**
@@ -459,6 +460,8 @@ int64_t Dictionary::ntokens() const {
 void Dictionary::initNgrams() {
 	wordprops_.resize(words_.m_size);
 
+	std::cout << "initail Ngrams feature, maybe take a while...... " << std::endl;
+
 	if ((args_->model == model_name::skipgram) || (args_->model == model_name::cbow) || (args_->model == model_name::subword)) {
 		for (size_t i = 0; i < words_.m_size; i++) {
 			wordprops_[i].word = words_.from_id(i);
@@ -487,6 +490,7 @@ void Dictionary::initNgrams() {
 			}
 		}
 	}
+	std::cout << "initail Ngrams feature finished. " << std::endl;
 }
 
 /**

@@ -312,8 +312,8 @@ void Dictionary::initFeature() {
 
 	//substoke for chinese word stoke feature
 	if (args_->model == model_name::substoke) {
-		std::cerr << "initial word stoke feature" << std::endl;
-		std::cerr << "substoke model" << std::endl;
+		//std::cerr << "initial word stoke feature" << std::endl;
+		//std::cerr << "substoke model" << std::endl;
 		std::string word;
 		std::string feat;
 		for (size_t i = 0; i < words_.m_size; i++) {

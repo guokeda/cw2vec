@@ -90,8 +90,8 @@ void FastText::train(const Args args) {
 		infeature.close();
 	}
 
-	input_ = std::make_shared<Matrix>(dict_->nwords() + dict_->nfeatures(), args_->dim);
-	//input_ = std::make_shared<Matrix>(dict_->nwords() + args_->bucket, args_->dim);
+	//input_ = std::make_shared<Matrix>(dict_->nwords() + dict_->nfeatures(), args_->dim);
+	input_ = std::make_shared<Matrix>(dict_->nwords() + args_->bucket, args_->dim);
 	input_->uniform(1.0 / args_->dim);
 
 	output_ = std::make_shared<Matrix>(dict_->nwords(), args_->dim);
@@ -151,7 +151,8 @@ void FastText::cbow(Model& model, real lr, const std::vector<std::vector<int32_t
 		bow.clear();
 		for (int32_t c = -boundary; c <= boundary; c++) {
 			if (c != 0 && w + c >= 0 && w + c < target.size()) {
-				const std::vector<int32_t>& ngrams = source[w];
+				const std::vector<int32_t>& ngrams = source[w + c];
+				assert(ngrams.size() == 1);
 				bow.insert(bow.end(), ngrams.cbegin(), ngrams.cend());
 			}
 		}
@@ -259,6 +260,7 @@ void FastText::startThreads() {
 }
 
 void FastText::saveVectors() {
+	std::cout << "Saving word embedding, maybe take a while......" << std::endl;
 	int32_t nwords = dict_->nwords();
 	int32_t ntargets = dict_->ntargets();
 	int32_t nfeatures = dict_->nfeatures();
@@ -316,6 +318,7 @@ void FastText::saveVectors() {
 		}
 		ofs.close();
 	}
+	std::cout << "Save word embedding finished." << std::endl;
 }
 
 

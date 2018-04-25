@@ -371,8 +371,24 @@ std::string Dictionary::getFeat(std::string word) {
 /**
 * @Function: computer subfeature for chinese character feature, like radaical/stoke.
 */
-void Dictionary::computerSubfeat(const std::string& featbe, std::vector<std::string>& substrings) const {
+void Dictionary::computerSubfeat(const std::string& featbe_s, std::vector<std::string>& substrings) const {
+	std::vector<string> featbe;
+	getCharactersFromUTF8String(featbe_s, featbe);
+	std::string ngram = "";
 	for (size_t i = 0; i < featbe.size(); i++) {
+		for (size_t j = args_->minn; j <= args_->maxn; j++) {
+			if ((i + j) > featbe.size()) 
+				continue;
+			
+			ngram.clear();
+			for (size_t k = i; k <(i + j); k++) {
+				ngram += featbe[k];
+			}
+			substrings.push_back(ngram);
+		}
+	}
+
+	/*for (size_t i = 0; i < featbe.size(); i++) {
 		std::string ngram;
 		if ((featbe[i] & 0xC0) == 0x80) continue;
 		for (size_t j = i, n = 1; j < featbe.size() && n <= args_->maxn; n++) {
@@ -384,14 +400,32 @@ void Dictionary::computerSubfeat(const std::string& featbe, std::vector<std::str
 				substrings.push_back(ngram);
 			}
 		}
-	}
+	}*/
 }
 
 /**
 * @Function: computer subfeature for chinese character feature, like radaical/stoke.
 */
-void Dictionary::computerSubfeat(const std::string& word, std::vector<int32_t>& ngrams) const {
+void Dictionary::computerSubfeat(const std::string& word_s, std::vector<int32_t>& ngrams) const {
+	std::vector<string> word;
+	getCharactersFromUTF8String(word_s, word);
+	std::string ngram = "";
 	for (size_t i = 0; i < word.size(); i++) {
+		for (size_t j = args_->minn; j <= args_->maxn; j++) {
+			if ((i + j) > word.size())
+				continue;
+
+			ngram.clear();
+			for (size_t k = i; k <(i + j); k++) {
+				ngram += word[k];
+			}
+			int32_t h = findFeature(ngram);
+			if (h >= 0)
+				ngrams.push_back(words_.m_size + h);
+		}
+	}
+	
+	/*for (size_t i = 0; i < word.size(); i++) {
 		std::string ngram;
 		if ((word[i] & 0xC0) == 0x80) continue;
 		for (size_t j = i, n = 1; j < word.size() && n <= args_->maxn; n++) {
@@ -405,7 +439,7 @@ void Dictionary::computerSubfeat(const std::string& word, std::vector<int32_t>& 
 					ngrams.push_back(words_.m_size + h);
 			}
 		}
-	}
+	}*/
 }
 
 /**
